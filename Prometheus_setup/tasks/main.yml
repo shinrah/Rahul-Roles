@@ -1,0 +1,76 @@
+---
+# tasks file for Prometheus_setup
+- name: download prometheus archive
+  ansible.builtin.get_url:
+    url: "{{ prometheus_url }}"
+    dest: /opt/
+    mode: '0644'
+
+- name: extract promotheus archive
+  ansible.builtin.unarchive:
+    src: /opt/prometheus-2.52.0.linux-amd64.tar.gz
+    dest: /opt/
+    remote_src: yes
+
+- name: create prometheus user
+  ansible.builtin.user:
+    name: prometheus
+    shell: /sbin/nologin
+    system: yes
+    create_home: no
+
+- name: install prometheus binary
+  ansible.builtin.copy:
+    src: /opt/prometheus-2.52.0.linux-amd64/{{ item }}
+    dest: /usr/local/bin/{{ item }}
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+    remote_src: yes
+  loop: 
+    - prometheus
+    - promtool 
+
+- name: create prometheus directories
+  ansible.builtin.file:
+     path: "{{ item }}"
+     state: directory
+     owner: prometheus
+     group: prometheus
+     mode: '0755'
+  loop:
+    - /etc/prometheus
+    - /var/lib/prometheus
+
+- name: copy prometheus config file
+  ansible.builtin.template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: prometheus
+    group: prometheus
+    mode: '0644'
+
+- name: Create systemd service for Prometheus
+  ansible.builtin.template:
+    src: prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: start the service and enable it at boot
+  ansible.builtin.systemd:
+    name: prometheus
+    state: started
+    enabled: yes
+
+- name: install grafana server
+  ansible.builtin.dnf:
+    name: https://dl.grafana.com/oss/release/grafana-10.4.2-1.x86_64.rpm
+    state: present
+
+- name: start grafana server and enable it at boot
+  ansible.builtin.systemd:
+    name: grafana-server
+    state: started
+    enabled: yes
