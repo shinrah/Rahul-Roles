@@ -1,5 +1,0 @@
----
-- hosts: webserver[0]
-  become: yes
-  roles:
-    - linux-patching

@@ -1,0 +1,11 @@
+---
+# defaults file for baseline
+baseline_admin_user: opsadmin
+baseline_admin_shell: /bin/bash
+baseline_packages:
+  - vim
+  - net-tools
+  - wget
+baseline_disabled_services:
+  - rpcbind
+baseline_disable_root_ssh: true

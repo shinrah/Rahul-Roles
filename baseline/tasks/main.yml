@@ -1,0 +1,46 @@
+---
+# tasks file for baseline
+- name: creaet baseline admin user
+  user: 
+    name: "{{ baseline_admin_user }}"
+    shell: "{{ baseline_admin_shell }}"
+    password: "{{ baseline_admin_password | password_hash('sha512') }}"
+    create_home: yes
+    state: present
+
+- name: add baseline admin user to wheel group
+  user:
+    name: "{{ baseline_admin_user }}"
+    groups: wheel
+    append: yes
+  when: ansible_os_family == "RedHat" or ansible_os_family == "Suse"
+
+- name: add baseline admin user to sudo group
+  user: 
+    name: "{{ baseline_admin_user }}"
+    groups: sudo
+    append: yes
+  when: ansible_os_family == "Debian"
+
+- name: install packages
+  dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ baseline_packages }}"
+  when: ansible_os_family == "RedHat"
+
+- name: disble unused services
+  service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  loop: "{{ baseline_disabled_services }}"
+  ignore_errors: yes
+
+- name: disable root login
+  lineinfile:
+     path: /etc/ssh/sshd_config
+     regexp: "^PermitRootLogin"
+     line: "PermitRootLogin no"
+  when: baseline_disable_root_ssh
+  notify: restart_sshd

@@ -1,5 +1,0 @@
----
-# defaults file for linux-patching
-patching_reboot: false
-kernel_cleanup: false
-reboot_timeout: 900
