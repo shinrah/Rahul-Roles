@@ -1,0 +1,10 @@
+---
+# defaults file for database_setup
+# Database defaults
+db_pkg: 
+  - mariadb105-server
+  - python3 
+  - python3-pip
+db_service_name: mariadb
+db_root_user: root
+db_port: 3306

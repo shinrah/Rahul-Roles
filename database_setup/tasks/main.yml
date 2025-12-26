@@ -1,0 +1,29 @@
+---
+- name: Install MariaDB server packages
+  ansible.builtin.dnf:
+    name: "{{ db_pkg }}"
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Ensure MariaDB service is running and enabled
+  ansible.builtin.service:
+    name: "{{ db_service_name }}"
+    state: started
+    enabled: yes
+  when: ansible_os_family == "RedHat"
+
+- name: install pymyql db_pkg
+  ansible.builtin.pip:
+    name: PyMySQL
+  when: ansible_os_family == "RedHat"
+
+- name: Set MariaDB root password
+  ansible.builtin.mysql_user:
+    name: "{{ db_root_user }}"
+    host: localhost
+    password: "{{ db_root_password }}"
+    login_unix_socket: /var/lib/mysql/mysql.sock
+    check_implicit_admin: yes
+    state: present
+  when: ansible_os_family == "RedHat"
+
