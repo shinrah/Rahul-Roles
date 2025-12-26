@@ -1,0 +1,13 @@
+---
+# tasks file for linux-patching
+- name: include redhat patching tasks
+  include_tasks: redhat.yml 
+  when: ansible_os_family == "RedHat"
+
+- name: include ubuntu patching tasks
+  include_tasks: ubuntu.yml
+  when: ansible_distribution == "Ubuntu"
+
+- name: include suse patching tasks
+  include_tasks: suse.yml
+  when: ansible_os_family == "Suse"

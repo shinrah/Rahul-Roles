@@ -1,0 +1,10 @@
+---
+- name: Update all packages to the latest version
+  dnf:
+    name: '*'
+    state: latest 
+
+- name: reboot system if patching_reboot is enabled
+  reboot:
+    reboot_timeout: "{{ reboot_timeout }}"
+  when: patching_reboot
