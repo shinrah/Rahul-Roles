@@ -17,13 +17,43 @@
     name: PyMySQL
   when: ansible_os_family == "RedHat"
 
-- name: Set MariaDB root password
+
+- name: Remove anonymous MySQL users
+  ansible.builtin.mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: "{{ db_root_user }}"
+    login_password: "{{ db_root_password }}"
+  when: ansible_os_family == "RedHat"
+
+- name: Disallow remote root login
+  ansible.builtin.mysql_user:
+    name: "{{ db_root_user }}"
+    host: '%'
+    state: absent
+    login_user: "{{ db_root_user }}"
+    login_password: "{{ db_root_password }}"
+  when: ansible_os_family == "RedHat"
+
+
+- name: Remove test database
+  ansible.builtin.mysql_db:
+    name: test
+    state: absent
+    login_user: "{{ db_root_user }}"
+    login_password: "{{ db_root_password }}"
+  when: ansible_os_family == "RedHat"
+
+
+- name: Flush MySQL privileges
   ansible.builtin.mysql_user:
     name: "{{ db_root_user }}"
     host: localhost
-    password: "{{ db_root_password }}"
-    login_unix_socket: /var/lib/mysql/mysql.sock
     check_implicit_admin: yes
     state: present
+    login_user: "{{ db_root_user }}"
+    login_password: "{{ db_root_password }}"
   when: ansible_os_family == "RedHat"
+
 
