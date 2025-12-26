@@ -1,0 +1,18 @@
+---
+# tasks file for webserver setup
+
+- name: Install Apache on RedHat systems
+  include_tasks: apache_install.yml
+  when: ansible_os_family == "RedHat"
+
+- name: Configure Apache service on RedHat systems
+  include_tasks: apache_service.yml
+  when: ansible_os_family == "RedHat"
+
+- name: Deploy Apache content on RedHat systems
+  include_tasks: apache_template.yml
+  when: ansible_os_family == "RedHat"
+
+- name: Configure firewall for Apache on RedHat systems
+  include_tasks: apache_firewall.yml
+  when: ansible_os_family == "RedHat"

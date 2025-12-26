@@ -1,0 +1,6 @@
+- name: apache service enabled and started
+  ansible.builtin.service:
+    name: httpd
+    state: started
+    enabled: yes
+  when: ansible_os_family == "RedHat"
