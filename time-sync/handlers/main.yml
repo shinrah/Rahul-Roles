@@ -1,0 +1,7 @@
+---
+# handlers file for time-sync
+- name: restart chrony
+  ansible.builtin.service:
+    name: chronyd
+    state: restarted
+  when: ansible_os_family == "RedHat"

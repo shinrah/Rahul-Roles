@@ -1,0 +1,4 @@
+---
+# defaults file for time-sync
+ntp_servers:
+  - pool.ntp.org

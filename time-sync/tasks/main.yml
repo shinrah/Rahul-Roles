@@ -1,0 +1,24 @@
+---
+# tasks file for time-sync
+- name: Ensure chrony is installed
+  ansible.builtin.dnf:
+    name: chrony
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: configure chrony server
+  ansible.builtin.template:
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart chrony
+  when: ansible_os_family == "RedHat"
+
+- name: Ensure chrony service is running and enabled
+  ansible.builtin.service:
+    name: chronyd
+    state: started
+    enabled: yes
+  when: ansible_os_family == "RedHat" 
